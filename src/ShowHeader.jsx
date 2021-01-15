@@ -6,10 +6,10 @@ import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 dayjs.extend(localizedFormat)
 
-function ShowHeader({show}) {
-  console.log(show)
-  let { genres, image, name, premiered, summary } = show;
-  console.log(genres, image, name, premiered, summary)
+function ShowHeader({info}) {
+  
+  let { genres, image, name, premiered, summary } = info;
+ 
   return (
     <div>
       <Container>
@@ -20,7 +20,7 @@ function ShowHeader({show}) {
           <Col>
           <h2>{name}</h2>
           <p>{`${genres.join(', ')} | Premiered on ${dayjs(premiered).format('ll')}`}</p>
-          <p>{summary}</p>
+          <p>{summary.replace( /(<([^>]+)>)/ig, '')}</p>
           </Col>
         </Row>
       </Container>
