@@ -15,7 +15,7 @@ function ShowHeader({info}) {
       <Container>
         <Row>
           <Col>
-            <img src={image.medium} alt='poster' />
+            {image ? <img src={image} alt='poster' /> : <div>n/a</div>}
           </Col>
           <Col>
           <h2>{name}</h2>

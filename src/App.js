@@ -9,6 +9,7 @@ import Replace from './Replace';
 function App() {
   const [show, setShow] = useState({});
   const [episodes, setEpisodes] = useState([]);
+  
   useEffect(() => {
     (async() => {
       try {
@@ -17,10 +18,10 @@ function App() {
         );
         // i need to get show state and episode state
         console.log(response);
-        let { name, genres, premiered, summary, image, _embedded } = response.data
+        let { id, name, genres, premiered, summary, image, _embedded } = response.data
         // summary = summary.replace( /(<([^>]+)>)/ig, '');
         
-        let obj = { name, genres, premiered, summary, image, _embedded }
+        let obj = { name, genres, premiered, summary, image: image.medium }
         console.log('showwwww', obj)
         let seasons = _embedded.episodes.reduce((acc, {name, season, airdate, summary, image, number }) => {
           if (acc[season - 1] === undefined) acc[season - 1] = [];
@@ -51,20 +52,31 @@ function App() {
       <ShowHeader info={show} />
       <Replace episodes={episodes} /> 
       {episodes.map((season, i) => {
-        return ( 
+        return (
+          <>
           <Season 
-            key={season[0].airdate}
+            key={season[i].airdate}
             numberOfEpisodes={season.length}
-            seasonNumber={season[0].season}
-            airdate={season[0].airdate}
-            >
-              {season.map(el => {
-                <div>test</div>
-              })}
-           
-          </Season>
-          )
-      })} 
+            seasonNumber={season[i].season}
+            airdate={season[i].airdate}
+            />
+            
+              {season.map(({airdate, name, season, summary, image, episode}) => {
+              return (
+                <Episode 
+                  key={name + airdate}
+                  name={name}
+                  season={season}
+                  summary={summary}
+                  image={image}
+                  episodeNumber={episode}
+                  airdate={airdate}
+                  />
+                )
+            })}
+            </>
+           )
+  })} 
     </div>
   );
 }
