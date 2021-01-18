@@ -1,25 +1,28 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 import ShowHeader from './ShowHeader'
 import Season from './Season';
 import Episode from './Episode';
 import Replace from './Replace';
+import Navbar from './Navbar';
 
 function App() {
+  // const EpisodeContext = createContext();
   const [show, setShow] = useState({});
   const [episodes, setEpisodes] = useState([]);
   
   useEffect(() => {
+    
     (async() => {
+      console.log('making api call')
       try {
         let response = await axios.get(
-          "http://api.tvmaze.com/shows/2?embed=episodes"
+          "http://api.tvmaze.com/shows/1?embed=episodes"
         );
         // i need to get show state and episode state
         console.log(response);
-        let { id, name, genres, premiered, summary, image, _embedded } = response.data
-        // summary = summary.replace( /(<([^>]+)>)/ig, '');
+        let { name, genres, premiered, summary, image, _embedded } = response.data
         
         let obj = { name, genres, premiered, summary, image: image.medium }
         console.log('showwwww', obj)
@@ -49,8 +52,10 @@ function App() {
   
   return (
     <div className="App">
+      {/* <EpisodeContext.Provider value={episodes, setEpisodes} > */}
+      <Navbar setEpisodes={setEpisodes} setShow={setShow} />
       <ShowHeader info={show} />
-      <Replace episodes={episodes} /> 
+      <Replace episodes={episodes} setEpisodes={setEpisodes} /> 
       {episodes.map((season, i) => {
         return (
           <>
@@ -61,7 +66,7 @@ function App() {
             airdate={season[i].airdate}
             />
             
-              {season.map(({airdate, name, season, summary, image, episode}) => {
+              {season.map(({airdate, name, season, summary, image, number}) => {
               return (
                 <Episode 
                   key={name + airdate}
@@ -69,7 +74,7 @@ function App() {
                   season={season}
                   summary={summary}
                   image={image}
-                  episodeNumber={episode}
+                  episodeNumber={number}
                   airdate={airdate}
                   />
                 )
@@ -77,6 +82,7 @@ function App() {
             </>
            )
   })} 
+  
     </div>
   );
 }

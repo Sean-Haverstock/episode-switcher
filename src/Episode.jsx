@@ -7,17 +7,16 @@ import localizedFormat from 'dayjs/plugin/localizedFormat'
 dayjs.extend(localizedFormat)
 
 function Episode({name, season, summary, image, episodeNumber, airdate}) {
-  console.log("in episode component", season)
   return (
     <Container>
       <Row>
           <Col>
-          {image.medium ? <img src={image.medium} alt='poster' /> : <div>n/a</div>}
+          {image || image.medium ? <img src={image.medium} alt='poster' /> : <div>n/a</div>}
           </Col>
           <Col>
           <h2>{name}</h2>
-          <p>{`Season ${season}| Episode ${episodeNumber} | ${dayjs(airdate).format('ll')}`}</p>
-          <p>{summary.replace( /(<([^>]+)>)/ig, '')}</p>
+          <p>{airdate ? `Season ${season} | Episode ${episodeNumber} | ${dayjs(airdate).format('ll')}` : `Season ${season} | Episode ${episodeNumber}`}</p>
+          <p>{summary ? summary.replace( /(<([^>]+)>)/ig, '') : ''}</p>
           </Col>
         </Row>
     </Container>

@@ -19,8 +19,8 @@ function ShowHeader({info}) {
           </Col>
           <Col>
           <h2>{name}</h2>
-          <p>{`${genres.join(', ')} | Premiered on ${dayjs(premiered).format('ll')}`}</p>
-          <p>{summary.replace( /(<([^>]+)>)/ig, '')}</p>
+          <p>{premiered ? `${genres.join(', ')} | Premiered on ${dayjs(premiered).format('ll')}` : `${genres.join(', ')}`}</p>
+          <p>{summary ? summary.replace( /(<([^>]+)>)/ig, '') : ''}</p>
           </Col>
         </Row>
       </Container>
