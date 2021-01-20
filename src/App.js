@@ -17,7 +17,7 @@ function App() {
 			console.log('making api call');
 			try {
 				let response = await axios.get(
-					`http://api.tvmaze.com/shows/${generateId(50000)}?embed=episodes`
+					`https://api.tvmaze.com/shows/${generateId(50000)}?embed=episodes`
 				);
 
 				let {
