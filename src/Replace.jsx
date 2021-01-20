@@ -1,38 +1,37 @@
-import React, { useState } from 'react';
-import Container from 'react-bootstrap/Container';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 
-function Replace({ episodes, setEpisodes }) {
-	console.log('episodeState', episodes);
+function Replace({ episodes, setEpisodes, show }) {
 	const [showQuery, setShowQuery] = useState('');
 	const [selectedEpisode, setSelectedEpisode] = useState(1);
 	const [selectedSeason, setSelectedSeason] = useState(1);
+	const [queryError, setQueryError] = useState(false);
+	const [errorString, setErrorString] = useState('');
 
 	const fetchEpisode = async (showQuery) => {
 		try {
 			let { data } = await axios.get(
 				`https://api.tvmaze.com/singlesearch/shows?q=${showQuery}&embed=episodes`
 			);
+
 			let { _embedded } = data;
-			console.log('apiCall result', _embedded);
 
 			let result = _embedded.episodes.filter((currEpisode) => {
-				console.log(
-					currEpisode.season,
-					'=',
-					selectedSeason,
-					'?',
-					currEpisode.season === selectedSeason
-				);
 				return currEpisode.season === selectedSeason;
 			});
-			console.log('result', result);
+			if (!result.length) {
+				setErrorString(
+					'There is no matching episode for the season, episode and show provided'
+				);
+				setQueryError(true);
+			}
+
 			setEpisodes(
 				episodes.map((seasons, index) => {
 					return index !== selectedSeason - 1
 						? seasons
 						: seasons.map((episodeObj) => {
-								console.log(episodeObj.number, selectedEpisode);
 								return episodeObj.number === selectedEpisode
 									? result[selectedEpisode - 1]
 									: episodeObj;
@@ -40,48 +39,43 @@ function Replace({ episodes, setEpisodes }) {
 				})
 			);
 		} catch (error) {
-			console.log(error);
+			setQueryError(true);
+			setErrorString(`There is no show matching ${showQuery}`);
 		}
 	};
 
 	function handleSeasonChange(e) {
-		console.log('handleChange', e.target, e.target.value);
 		setSelectedSeason(Number(e.target.value));
 	}
-	// function handleSeasonChange(e) {
-	//   setSeason()
-	// }
+
 	function handleNameChange(e) {
-		console.log(e.target.value);
 		setShowQuery(e.target.value);
 	}
 	function handleEpisodeChange(e) {
-		console.log(e.target.value);
 		setSelectedEpisode(Number(e.target.value));
 	}
 	function handleSubmit(e) {
+		setQueryError(false);
+		setErrorString('');
 		e.preventDefault();
 		fetchEpisode(showQuery);
-		setShowQuery('');
-		setSelectedEpisode(1);
-		setSelectedSeason(1);
 	}
 
 	return (
 		<div class="container">
 			<form onSubmit={handleSubmit}>
-				<label for="season">Replace</label>
+				<label htmlFor="season">Replace</label>
 				<select
 					class="mx-3 px-3 py-1 text-secondary rounded"
 					id="season"
 					onChange={handleSeasonChange}
 				>
-					{episodes.map((season, i) => {
+					{episodes.map((season) => {
 						return (
 							<option
-								key={season[i].season}
-								value={season[i].season}
-							>{`Season ${season[i].season}`}</option>
+								key={uuidv4()}
+								value={season[0].season}
+							>{`Season ${season[0].season}`}</option>
 						);
 					})}
 				</select>
@@ -95,7 +89,7 @@ function Replace({ episodes, setEpisodes }) {
 						);
 					})}
 				</select>
-				<label class="mx-3" for="showName">
+				<label class="mx-3" htmlFor="showName">
 					with
 				</label>
 				<input
@@ -111,6 +105,9 @@ function Replace({ episodes, setEpisodes }) {
 					Replace
 				</button>
 			</form>
+			{queryError ? (
+				<div class="container px-3 text-white bg-danger rounded-2">{`${errorString}`}</div>
+			) : null}
 		</div>
 	);
 }

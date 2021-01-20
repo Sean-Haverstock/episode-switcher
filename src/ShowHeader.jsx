@@ -1,30 +1,25 @@
 import React from 'react';
-import ShowHeaderStyles from './ShowHeaderStyles.css';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 dayjs.extend(localizedFormat);
 
 function ShowHeader({ info }) {
-	console.log('showheader', info);
 	let { genres, image, name, premiered, summary } = info;
 
 	return (
 		<div class="container">
 			<div class="row">
-				<div class="col-xs-3">
+				<div class="col-xs-3 d-flex poster-null">
 					{image ? (
 						<img src={image.medium} alt="poster" />
 					) : (
-						<div class="image-null">N/A</div>
+						<h3 class="col align-self-center">NA</h3>
 					)}
 				</div>
 				<div class="col">
 					<h2>{name}</h2>
 					<p class="text-muted">
-						{premiered
+						{premiered && genres.length
 							? `${genres.join(', ')} | Premiered on ${dayjs(premiered).format(
 									'll'
 							  )}`

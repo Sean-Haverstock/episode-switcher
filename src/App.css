@@ -1,9 +1,25 @@
-.image-null {
-	min-width: 250px;
-	min-height: 140px;
+body {
+	font-family: 'Roboto';
+}
+
+.poster-null {
+	min-width: 210px;
+	min-height: 295px;
 	background-color: darkgray;
 	color: white;
 	text-align: center;
+}
+.image-null {
+	min-width: 210px;
+	min-height: 118px;
+	background-color: darkgray;
+	color: white;
+	text-align: center;
+}
+
+.episode-image {
+	max-width: 210px;
+	max-height: 118px;
 }
 
 .container {
