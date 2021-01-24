@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import axios from 'axios';
 import './App.css';
 import ShowHeader from './ShowHeader';
 import SeasonsAndEpisodes from './SeasonsAndEpisodes';
 import Replace from './Replace';
-import Navbar from './Navbar';
+import Navbar from './Navbar.jsx';
 import { v4 as uuidv4 } from 'uuid';
+import { ShowContext } from './context/ShowContext';
+import { EpisodeContext } from './context/EpisodeContext';
 
 function App() {
   const [show, setShow] = useState({});
@@ -66,36 +68,23 @@ function App() {
 
   return (
     <div>
-      {isLoading ? (
-        <>
-          <Navbar setEpisodes={setEpisodes} setShow={setShow} />
-          <div> </div>
-        </>
-      ) : (
-        <>
-          <Navbar
-            setEpisodes={setEpisodes}
-            setShow={setShow}
-            loading={isLoading}
-            setLoading={setLoading}
-          />
-          <ShowHeader info={show} />
-          {!episodes.length ? null : (
-            <Replace
-              episodes={episodes}
-              setEpisodes={setEpisodes}
-              show={show}
-            />
+      <ShowContext.Provider value={[show, setShow]}>
+        <EpisodeContext.Provider value={[episodes, setEpisodes]}>
+          {isLoading ? (
+            <>
+              <Navbar />
+              <div> </div>
+            </>
+          ) : (
+            <>
+              <Navbar setLoading={setLoading} />
+              <ShowHeader />
+              {!episodes.length ? null : <Replace />}
+              <SeasonsAndEpisodes key={uuidv4()} />
+            </>
           )}
-          <SeasonsAndEpisodes
-            key={uuidv4()}
-            episodes={episodes}
-            setEpisodes={setEpisodes}
-            show={show}
-            setShow={setShow}
-          />
-        </>
-      )}
+        </EpisodeContext.Provider>
+      </ShowContext.Provider>
     </div>
   );
 }

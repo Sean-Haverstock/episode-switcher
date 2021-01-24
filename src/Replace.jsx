@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import { ShowContext } from './context/ShowContext';
+import { EpisodeContext } from './context/EpisodeContext';
 
-function Replace({ episodes, setEpisodes, show }) {
+function Replace() {
   const [showQuery, setShowQuery] = useState('');
   const [selectedEpisode, setSelectedEpisode] = useState(1);
   const [selectedSeason, setSelectedSeason] = useState(1);
   const [queryError, setQueryError] = useState(false);
   const [errorString, setErrorString] = useState('');
+
+  const [episodes, setEpisodes] = useContext(EpisodeContext);
 
   const fetchEpisode = async (showQuery) => {
     try {

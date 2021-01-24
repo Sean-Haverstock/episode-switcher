@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
+import { EpisodeContext } from './context/EpisodeContext';
+import { ShowContext } from './context/ShowContext';
 
-function Navbar({ setEpisodes, setShow, setLoading }) {
+function Navbar({ setLoading }) {
   const [showQuery, setShowQuery] = useState('');
+  const [setEpisodes] = useContext(EpisodeContext);
+  const [setShow] = useContext(ShowContext);
 
   const fetchShow = async (showQuery) => {
     setLoading(true);
