@@ -22,35 +22,44 @@ function Replace() {
       const { data } = await axios.get(
         `https://api.tvmaze.com/singlesearch/shows?q=${showQuery}&embed=episodes`
       );
-      const { id } = data;
-      console.log(id, selectedSeason, selectedEpisode);
-      const result = await axios.get(
-        `http://api.tvmaze.com/shows/${id}/episodebynumber?season=${selectedSeason}&number=${selectedEpisode}`
-      );
-      const { name, season, airdate, summary, image, number } = result.data;
-      const newEpisode = { name, season, airdate, summary, image, number };
-      setEpisodes(
-        episodes.map((seasons, index) => {
-          return index !== selectedSeason - 1
-            ? seasons
-            : seasons.map((episode) => {
-                return episode.number === selectedEpisode
-                  ? newEpisode
-                  : episode;
-              });
-        })
-      );
+      const { _embedded } = data;
 
-      console.log(result);
+      const result = _embedded.episodes.filter((currEpisode) => {
+        return (
+          currEpisode.season === selectedSeason &&
+          currEpisode.number === selectedEpisode
+        );
+      });
+
+      if (!result.length) {
+        setErrorString(
+          'There is no matching episode for the season, episode and show provided'
+        );
+        setQueryError(true);
+      } else {
+        console.log(result, data);
+        const { name, season, airdate, summary, image, number } = result[0];
+        const newEpisode = { name, season, airdate, summary, image, number };
+
+        setEpisodes(
+          episodes.map((season) => {
+            return season[0].season !== selectedSeason
+              ? season
+              : season.map((episode) => {
+                  return episode.number === selectedEpisode
+                    ? newEpisode
+                    : episode;
+                });
+          })
+        );
+      }
     } catch (error) {
-      console.log('error', error);
       setQueryError(true);
       setErrorString(`There is no show matching ${showQuery}`);
     }
   };
 
   function handleSeasonChange(e) {
-    console.log('index', e.target, 'value', e.target.value);
     setSelectedSeason(Number(e.target.value));
     setSeasonIndex(seasonNumberAndIndexes[Number(e.target.value)]);
   }
@@ -62,9 +71,9 @@ function Replace() {
     setSelectedEpisode(Number(e.target.value));
   }
   function handleSubmit(e) {
+    e.preventDefault();
     setQueryError(false);
     setErrorString('');
-    e.preventDefault();
     fetchEpisode(showQuery);
   }
 
@@ -119,20 +128,13 @@ function Replace() {
         </button>
       </form>
       {queryError ? (
-        <div class="container px-3 text-white bg-danger rounded-2">{`${errorString}`}</div>
+        <div
+          class="container px-3 alert alert-danger"
+          role="alert"
+        >{`${errorString}`}</div>
       ) : null}
     </div>
   );
 }
 
 export default Replace;
-
-// let result = _embedded.episodes.filter((currEpisode) => {
-//   return currEpisode.season === selectedSeason;
-// });
-// if (!result.length) {
-//   setErrorString(
-//     'There is no matching episode for the season, episode and show provided'
-//   );
-//   setQueryError(true);
-// }

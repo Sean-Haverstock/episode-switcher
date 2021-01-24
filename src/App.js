@@ -20,10 +20,13 @@ function App() {
       console.log('making api call');
       try {
         const { data } = await axios.get(
-          `https://api.tvmaze.com/shows/9360?embed[]=seasons&embed[]=episodes`
+          `https://api.tvmaze.com/shows/${generateId(
+            50000
+          )}?embed[]=seasons&embed[]=episodes`
         );
 
         const { id, name, genres, premiered, summary, image, _embedded } = data;
+        console.log(name);
         const seasonNumbers = _embedded.seasons.map(({ number }) => number);
         console.log('seasons', seasonNumbers);
         const showDetails = { id, name, genres, premiered, summary, image };
@@ -77,7 +80,7 @@ function App() {
               <Navbar setLoading={setLoading} />
               <ShowHeader />
               {!episodes.length ? null : <Replace />}
-              <SeasonsAndEpisodes key={uuidv4()} />
+              <SeasonsAndEpisodes />
             </>
           )}
         </EpisodeContext.Provider>
