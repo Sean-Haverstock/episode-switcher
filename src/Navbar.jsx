@@ -5,19 +5,19 @@ import { ShowContext } from './context/ShowContext';
 
 function Navbar({ setLoading }) {
   const [showQuery, setShowQuery] = useState('');
-  const [setEpisodes] = useContext(EpisodeContext);
-  const [setShow] = useContext(ShowContext);
+  const [, setEpisodes, , setSeasons] = useContext(EpisodeContext);
+  const [, setShow] = useContext(ShowContext);
 
   const fetchShow = async (showQuery) => {
     setLoading(true);
     try {
       let { data } = await axios.get(
-        `https://api.tvmaze.com/singlesearch/shows?q=${showQuery}&embed=episodes`
+        `https://api.tvmaze.com/singlesearch/shows?q=${showQuery}&embed[]=seasons&embed[]=episodes`
       );
-      let { name, genres, premiered, summary, image, _embedded } = data;
-      const obj = { name, genres, premiered, summary, image };
-
-      let seasons = _embedded.episodes.reduce(
+      const { name, genres, premiered, summary, image, _embedded } = data;
+      const showDetails = { name, genres, premiered, summary, image };
+      const seasonNumbers = _embedded.seasons.map(({ number }) => number);
+      const episodeBySeasons = _embedded.episodes.reduce(
         (acc, { name, season, airdate, summary, image, number }) => {
           if (acc[season - 1] === undefined) acc[season - 1] = [];
           acc[season - 1].push({
@@ -33,12 +33,13 @@ function Navbar({ setLoading }) {
         []
       );
 
-      const filteredSeasons = seasons.filter((el) => {
+      const filteredSeasons = episodeBySeasons.filter((el) => {
         return el !== null;
       });
 
-      setShow(obj);
+      setShow(showDetails);
       setEpisodes(filteredSeasons);
+      setSeasons(seasonNumbers);
       setLoading(false);
     } catch (error) {
       console.log(error);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 import ShowHeader from './ShowHeader';
@@ -11,6 +11,7 @@ import { EpisodeContext } from './context/EpisodeContext';
 
 function App() {
   const [show, setShow] = useState({});
+  const [seasons, setSeasons] = useState([]);
   const [episodes, setEpisodes] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
@@ -18,22 +19,15 @@ function App() {
     const fetchShow = async () => {
       console.log('making api call');
       try {
-        let response = await axios.get(
-          `https://api.tvmaze.com/shows/${generateId(50000)}?embed=episodes`
+        const { data } = await axios.get(
+          `https://api.tvmaze.com/shows/9360?embed[]=seasons&embed[]=episodes`
         );
 
-        let {
-          id,
-          name,
-          genres,
-          premiered,
-          summary,
-          image,
-          _embedded,
-        } = response.data;
-
-        const obj = { id, name, genres, premiered, summary, image };
-        const seasons = _embedded.episodes.reduce(
+        const { id, name, genres, premiered, summary, image, _embedded } = data;
+        const seasonNumbers = _embedded.seasons.map(({ number }) => number);
+        console.log('seasons', seasonNumbers);
+        const showDetails = { id, name, genres, premiered, summary, image };
+        const episodesBySeason = _embedded.episodes.reduce(
           (acc, { name, season, airdate, summary, image, number }) => {
             if (acc[season - 1] === undefined) acc[season - 1] = [];
             acc[season - 1].push({
@@ -48,11 +42,12 @@ function App() {
           },
           []
         );
-        const filteredSeasons = seasons.filter((el) => {
+        const filteredSeasons = episodesBySeason.filter((el) => {
           return el !== null;
         });
         setEpisodes(filteredSeasons);
-        setShow(obj);
+        setSeasons(seasonNumbers);
+        setShow(showDetails);
         setLoading(false);
       } catch (error) {
         console.log(error);
@@ -69,10 +64,12 @@ function App() {
   return (
     <div>
       <ShowContext.Provider value={[show, setShow]}>
-        <EpisodeContext.Provider value={[episodes, setEpisodes]}>
+        <EpisodeContext.Provider
+          value={[episodes, setEpisodes, seasons, setSeasons]}
+        >
           {isLoading ? (
             <>
-              <Navbar />
+              <Navbar setLoading={setLoading} />
               <div> </div>
             </>
           ) : (
