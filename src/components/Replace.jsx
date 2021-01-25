@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import { EpisodeContext } from './context/EpisodeContext';
+import { EpisodeContext } from '../context/EpisodeContext';
 
 function Replace() {
   const [episodes, setEpisodes, seasonNumbers] = useContext(EpisodeContext);
@@ -23,7 +23,6 @@ function Replace() {
         `https://api.tvmaze.com/singlesearch/shows?q=${showQuery}&embed=episodes`
       );
       const { _embedded } = data;
-
       const result = _embedded.episodes.filter((currEpisode) => {
         return (
           currEpisode.season === selectedSeason &&
@@ -37,7 +36,6 @@ function Replace() {
         );
         setQueryError(true);
       } else {
-        console.log(result, data);
         const { name, season, airdate, summary, image, number } = result[0];
         const newEpisode = { name, season, airdate, summary, image, number };
 

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
-import { ShowContext } from './context/ShowContext';
+import { ShowContext } from '../context/ShowContext';
 dayjs.extend(localizedFormat);
 
 function ShowHeader() {

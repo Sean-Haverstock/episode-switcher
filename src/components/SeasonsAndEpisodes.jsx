@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import Season from './Season';
 import Episode from './Episode';
 import { v4 as uuidv4 } from 'uuid';
-import { EpisodeContext } from './context/EpisodeContext';
+import { EpisodeContext } from '../context/EpisodeContext';
 
 function SeasonsAndEpisodes() {
   const [episodes] = useContext(EpisodeContext);

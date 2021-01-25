@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
-import ShowHeader from './ShowHeader';
-import SeasonsAndEpisodes from './SeasonsAndEpisodes';
-import Replace from './Replace';
-import Navbar from './Navbar.jsx';
-import { v4 as uuidv4 } from 'uuid';
+import ShowHeader from './components/ShowHeader';
+import SeasonsAndEpisodes from './components/SeasonsAndEpisodes';
+import Replace from './components/Replace';
+import Navbar from './components/Navbar.jsx';
 import { ShowContext } from './context/ShowContext';
 import { EpisodeContext } from './context/EpisodeContext';
 
@@ -17,7 +16,6 @@ function App() {
 
   useEffect(() => {
     const fetchShow = async () => {
-      console.log('making api call');
       try {
         const { data } = await axios.get(
           `https://api.tvmaze.com/shows/${generateId(
@@ -26,9 +24,8 @@ function App() {
         );
 
         const { id, name, genres, premiered, summary, image, _embedded } = data;
-        console.log(name);
         const seasonNumbers = _embedded.seasons.map(({ number }) => number);
-        console.log('seasons', seasonNumbers);
+
         const showDetails = { id, name, genres, premiered, summary, image };
         const episodesBySeason = _embedded.episodes.reduce(
           (acc, { name, season, airdate, summary, image, number }) => {

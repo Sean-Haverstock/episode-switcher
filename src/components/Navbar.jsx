@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
-import { EpisodeContext } from './context/EpisodeContext';
-import { ShowContext } from './context/ShowContext';
+import { EpisodeContext } from '../context/EpisodeContext';
+import { ShowContext } from '../context/ShowContext';
 
 function Navbar({ setLoading }) {
   const [showQuery, setShowQuery] = useState('');
