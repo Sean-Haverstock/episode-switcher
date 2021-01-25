@@ -10086,7 +10086,7 @@
     "uncontrollable" "^7.0.0"
     "warning" "^4.0.3"
 
-"react-dev-utils@^11.0.1":
+"react-dev-utils@^11.0.0":
   "integrity" "sha512-rlgpCupaW6qQqvu0hvv2FDv40QG427fjghV56XyPcP5aKtOAPzNAhQ7bHqk1YdS2vpW1W7aSV3JobedxuPlBAA=="
   "resolved" "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-11.0.1.tgz"
   "version" "11.0.1"
@@ -10164,10 +10164,10 @@
   "resolved" "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.8.3.tgz"
   "version" "0.8.3"
 
-"react-scripts@4.0.1":
-  "integrity" "sha512-NnniMSC/wjwhcJAyPJCWtxx6CWONqgvGgV9+QXj1bwoW/JI++YF1eEf3Upf/mQ9KmP57IBdjzWs1XvnPq7qMTQ=="
-  "resolved" "https://registry.yarnpkg.com/react-scripts/-/react-scripts-4.0.1.tgz"
-  "version" "4.0.1"
+"react-scripts@4.0.0":
+  "integrity" "sha512-icJ/ctwV5XwITUOupBP9TUVGdWOqqZ0H08tbJ1kVC5VpNWYzEZ3e/x8axhV15ZXRsixLo27snwQE7B6Zd9J2Tg=="
+  "resolved" "https://registry.npmjs.org/react-scripts/-/react-scripts-4.0.0.tgz"
+  "version" "4.0.0"
   dependencies:
     "@babel/core" "7.12.3"
     "@pmmmwh/react-refresh-webpack-plugin" "0.4.2"
@@ -10212,9 +10212,8 @@
     "postcss-normalize" "8.0.1"
     "postcss-preset-env" "6.7.0"
     "postcss-safe-parser" "5.0.2"
-    "prompts" "2.4.0"
     "react-app-polyfill" "^2.0.0"
-    "react-dev-utils" "^11.0.1"
+    "react-dev-utils" "^11.0.0"
     "react-refresh" "^0.8.3"
     "resolve" "1.18.1"
     "resolve-url-loader" "^3.1.2"
