@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
+import { ShowContext } from '../context/ShowContext';
 dayjs.extend(localizedFormat);
 
-function ShowHeader({ info }) {
-  let { genres, image, name, premiered, summary } = info;
+function ShowHeader() {
+  const [{ genres, image, name, premiered, summary }] = useContext(ShowContext);
 
   return (
     <div class="container">

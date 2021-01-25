@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Season from './Season';
 import Episode from './Episode';
 import { v4 as uuidv4 } from 'uuid';
+import { EpisodeContext } from '../context/EpisodeContext';
 
-function SeasonsAndEpisodes({ episodes, show }) {
+function SeasonsAndEpisodes() {
+  const [episodes] = useContext(EpisodeContext);
   return (
     <div>
       {!episodes.length

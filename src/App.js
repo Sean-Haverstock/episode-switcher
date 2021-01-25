@@ -1,37 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
-import ShowHeader from './ShowHeader';
-import SeasonsAndEpisodes from './SeasonsAndEpisodes';
-import Replace from './Replace';
-import Navbar from './Navbar';
-import { v4 as uuidv4 } from 'uuid';
+import ShowHeader from './components/ShowHeader';
+import SeasonsAndEpisodes from './components/SeasonsAndEpisodes';
+import Replace from './components/Replace';
+import Navbar from './components/Navbar.jsx';
+import { ShowContext } from './context/ShowContext';
+import { EpisodeContext } from './context/EpisodeContext';
 
 function App() {
   const [show, setShow] = useState({});
+  const [seasons, setSeasons] = useState([]);
   const [episodes, setEpisodes] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchShow = async () => {
-      console.log('making api call');
       try {
-        let response = await axios.get(
-          `https://api.tvmaze.com/shows/${generateId(50000)}?embed=episodes`
+        const { data } = await axios.get(
+          `https://api.tvmaze.com/shows/${generateId(
+            50000
+          )}?embed[]=seasons&embed[]=episodes`
         );
 
-        let {
-          id,
-          name,
-          genres,
-          premiered,
-          summary,
-          image,
-          _embedded,
-        } = response.data;
+        const { id, name, genres, premiered, summary, image, _embedded } = data;
+        const seasonNumbers = _embedded.seasons.map(({ number }) => number);
 
-        const obj = { id, name, genres, premiered, summary, image };
-        const seasons = _embedded.episodes.reduce(
+        const showDetails = { id, name, genres, premiered, summary, image };
+        const episodesBySeason = _embedded.episodes.reduce(
           (acc, { name, season, airdate, summary, image, number }) => {
             if (acc[season - 1] === undefined) acc[season - 1] = [];
             acc[season - 1].push({
@@ -46,11 +42,12 @@ function App() {
           },
           []
         );
-        const filteredSeasons = seasons.filter((el) => {
+        const filteredSeasons = episodesBySeason.filter((el) => {
           return el !== null;
         });
         setEpisodes(filteredSeasons);
-        setShow(obj);
+        setSeasons(seasonNumbers);
+        setShow(showDetails);
         setLoading(false);
       } catch (error) {
         console.log(error);
@@ -66,36 +63,25 @@ function App() {
 
   return (
     <div>
-      {isLoading ? (
-        <>
-          <Navbar setEpisodes={setEpisodes} setShow={setShow} />
-          <div> </div>
-        </>
-      ) : (
-        <>
-          <Navbar
-            setEpisodes={setEpisodes}
-            setShow={setShow}
-            loading={isLoading}
-            setLoading={setLoading}
-          />
-          <ShowHeader info={show} />
-          {!episodes.length ? null : (
-            <Replace
-              episodes={episodes}
-              setEpisodes={setEpisodes}
-              show={show}
-            />
+      <ShowContext.Provider value={[show, setShow]}>
+        <EpisodeContext.Provider
+          value={[episodes, setEpisodes, seasons, setSeasons]}
+        >
+          {isLoading ? (
+            <>
+              <Navbar setLoading={setLoading} />
+              <div> </div>
+            </>
+          ) : (
+            <>
+              <Navbar setLoading={setLoading} />
+              <ShowHeader />
+              {!episodes.length ? null : <Replace />}
+              <SeasonsAndEpisodes />
+            </>
           )}
-          <SeasonsAndEpisodes
-            key={uuidv4()}
-            episodes={episodes}
-            setEpisodes={setEpisodes}
-            show={show}
-            setShow={setShow}
-          />
-        </>
-      )}
+        </EpisodeContext.Provider>
+      </ShowContext.Provider>
     </div>
   );
 }
