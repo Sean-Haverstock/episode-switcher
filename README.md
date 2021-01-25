@@ -1,70 +1,39 @@
-# Getting Started with Create React App
+# Episode Switcher 2021
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[Click here](https://episode-switcher2021.herokuapp.com/) to view Sean Haverstock's episode switcher
 
-## Available Scripts
+## Define requirements
 
-In the project directory, you can run:
+#### 1) Load a random TV show on each refresh.
 
-### `yarn start`
+Approach: I decided to hit the **show/:id/embed=episodes** endpoint because **show/:id/episodes** endpoint doesn't return required show info such as summary, genres and premier date. I created a helper function that randomly generated a number between 0 and 50,000. The value/id was returned and interpolated in the useEffect hook. 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+#### 2) Dislay ALL episodes starting with first season
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Approach: I went with an array of array's to structure the episode list/content into seasons, making each season a subarray. This way I could render the season and episode sibling components with nested map methods. This would later prove to make indexing seasons difficult for shows such as Golfing World whose seasons are not in exact incremental order i.e., seasons go from 1 to 6. 
 
-### `yarn test`
+An alternative approach considered was a single show object that contained all the necessary show information, and each season as a property where each value was an array of episodes. If I were to start over, I would likely restructure my data in this manner, as well as have an additional seasons property with an array to contain the number of each season. 
+```javascript
+const show = {
+    name: 'Simpsons",
+    season1: [{}, {}, ..., {}],
+    season2: [{}, {}, ..., {}],
+    season3: [{}, {}, ..., {}],
+    seasons: [1, 6, 7, 8]
+    }
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### 3) Replace an episode of the same number with the name from input field
 
-### `yarn build`
+Approach: I hit the show single search endpoint returning the embedded episodes. I then had to filter the data to see if the returned data had a season that matched the user selected season. If it didn't I handled the error. 
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Alternative: It would have been nicer to hit the Episode by number endpoint **/shows/:id/episodebynumber?season=:season&number=:number** and handle the absence of an episode (error) without the need to filter the data. But without the show id this would require an (additonal) api call beforehand to obtain the id first. 
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### 4) Handle missing images and null data.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Approach: I conditionally rendered much of the data such as images, airdates, summaries and premier dates which were often absent with the use of ternary operators.
+For missing images, I created div's the same size as the images that are provided from the api. 
 
-### `yarn eject`
+#### Other Notes
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Given the app did not have deeply nested comonents, I passed props through instead of using a Context provider. 
