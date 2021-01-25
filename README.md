@@ -34,6 +34,4 @@ Alternative: It would have been nicer to hit the Episode by number endpoint **/s
 Approach: I conditionally rendered much of the data such as images, airdates, summaries and premier dates which were often absent with the use of ternary operators.
 For missing images, I created div's the same size as the images that are provided from the api. 
 
-#### Other Notes
 
-Given the app did not have deeply nested comonents, I passed props through instead of using a Context provider. 
